@@ -1,18 +1,16 @@
 "use strict";
 
 import * as uuid from "uuid";
-
-import { DynamoDB } from "aws-sdk";
-
 import { APIGatewayEvent, Context, ProxyCallback } from "aws-lambda";
-
-const dynamoDb = new DynamoDB.DocumentClient();
+import dynamoDb from "../shared/dynamo-db";
 
 export const create = (
   event: APIGatewayEvent,
   context: Context,
   callback: ProxyCallback
 ) => {
+  console.log("Here in create", event.body);
+
   const timestamp = new Date().getTime();
   const data = JSON.parse(event.body);
   if (typeof data.text !== "string") {
@@ -22,7 +20,7 @@ export const create = (
   }
 
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.DYNAMODB + "-todo",
     Item: {
       id: uuid.v1(),
       text: data.text,
