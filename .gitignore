@@ -1,0 +1,3 @@
+.dynamodb
+.build
+node_modules

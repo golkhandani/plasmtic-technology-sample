@@ -1,0 +1,80 @@
+service: sls-typescript-rest-api-with-dynamodb
+
+frameworkVersion: ">=2.0.0"
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+  - serverless-dynamodb-local
+  
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-2
+  environment:
+    DYNAMODB: plasmatic-technology
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB}"
+
+functions:
+  create:
+    handler: src/todos/create.create
+    events:
+      - http:
+          path: todos
+          method: post
+          cors: true
+
+  list:
+    handler: src/todos/list.list
+    events:
+      - http:
+          path: todos
+          method: get
+          cors: true
+        
+  get:
+    handler: src/todos/get.get
+    events:
+      - http:
+          path: todos/{id}
+          method: get
+          cors: true
+        
+  update:
+    handler: src/todos/update.update
+    events:
+      - http:
+          path: todos/{id}
+          method: put
+          cors: true        
+
+resources: # CloudFormation template syntax
+  Resources:
+    TodosDynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: plasmatic-technology-todo
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+custom:
+  dynamodb:
+    stages:
+      - test
