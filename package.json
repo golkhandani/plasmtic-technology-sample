@@ -9,7 +9,10 @@
     "watch": "tsc -w",
     "lint": "tslint '*.ts'"
   },
-  "keywords": ["AWS","Typescript"],
+  "keywords": [
+    "AWS",
+    "Typescript"
+  ],
   "author": "Mohammadreza Rahimiangolkhandnai",
   "license": "ISC",
   "devDependencies": {
@@ -26,6 +29,9 @@
   "dependencies": {
     "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.993.0",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
+    "reflect-metadata": "^0.1.13",
     "serverless-dynamodb-local": "^0.2.40",
     "uuid": "^3.1.0"
   }

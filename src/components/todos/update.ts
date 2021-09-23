@@ -1,10 +1,9 @@
 "use strict";
 
 import * as AWS from "aws-sdk"; // eslint-disable-line import/no-extraneous-dependencies
+import {dynamoClient as dynamoDb} from "../../shared/dynamo-db";
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-module.exports.update = (event, context, callback) => {
+export const update = (event, context, callback) => {
   const timestamp = new Date().getTime();
   const data = JSON.parse(event.body);
 
@@ -20,7 +19,7 @@ module.exports.update = (event, context, callback) => {
   }
 
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.DYNAMODB + "-todo",
     Key: {
       id: event.pathParameters.id,
     },

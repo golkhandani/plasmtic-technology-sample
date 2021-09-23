@@ -2,7 +2,7 @@
 
 import * as uuid from "uuid";
 import { APIGatewayEvent, Context, ProxyCallback } from "aws-lambda";
-import dynamoDb from "../shared/dynamo-db";
+import {dynamoClient as dynamoDb} from "../../shared/dynamo-db";
 
 export const create = (
   event: APIGatewayEvent,

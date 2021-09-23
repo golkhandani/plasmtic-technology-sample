@@ -3,9 +3,12 @@
     "target": "es6",
     "module": "commonjs",
     "sourceMap": false,
+    "experimentalDecorators": true,
     "allowJs": true,
     "outDir": ".build",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "rootDir": "./src"
   }
 }

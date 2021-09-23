@@ -1,13 +1,11 @@
-'use strict';
+"use strict";
 
-import { DynamoDB } from 'aws-sdk'
+import { DynamoDB } from "aws-sdk";
+import {dynamoClient as dynamoDb} from "../../shared/dynamo-db";
 
-const dynamoDb = new DynamoDB.DocumentClient()
-
-
-module.exports.get = (event, context, callback) => {
+export const get = (event, context, callback) => {
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: process.env.DYNAMODB + "-todo",
     Key: {
       id: event.pathParameters.id,
     },
@@ -20,8 +18,8 @@ module.exports.get = (event, context, callback) => {
       console.error(error);
       callback(null, {
         statusCode: error.statusCode || 501,
-        headers: { 'Content-Type': 'text/plain' },
-        body: 'Couldn\'t fetch the todo item.',
+        headers: { "Content-Type": "text/plain" },
+        body: "Couldn't fetch the todo item.",
       });
       return;
     }

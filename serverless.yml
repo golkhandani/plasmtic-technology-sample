@@ -6,7 +6,7 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dynamodb-local
-  
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -26,8 +26,24 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB}"
 
 functions:
+  pet-create:
+    handler: src/components/pet/pet.api.create
+    events:
+      - http:
+          path: pets
+          method: post
+          cors: true
+
+  pet-find-by-status:
+    handler: src/components/pet/pet.api.findByStatus
+    events:
+      - http:
+          path: pets
+          method: get
+          cors: true
+
   create:
-    handler: src/todos/create.create
+    handler: src/components/todos/create.create
     events:
       - http:
           path: todos
@@ -35,28 +51,28 @@ functions:
           cors: true
 
   list:
-    handler: src/todos/list.list
+    handler: src/components/todos/list.list
     events:
       - http:
           path: todos
           method: get
           cors: true
-        
+
   get:
-    handler: src/todos/get.get
+    handler: src/components/todos/get.get
     events:
       - http:
           path: todos/{id}
           method: get
           cors: true
-        
+
   update:
-    handler: src/todos/update.update
+    handler: src/components/todos/update.update
     events:
       - http:
           path: todos/{id}
           method: put
-          cors: true        
+          cors: true
 
 resources: # CloudFormation template syntax
   Resources:
@@ -65,10 +81,10 @@ resources: # CloudFormation template syntax
       Properties:
         TableName: plasmatic-technology-todo
         AttributeDefinitions:
-          - AttributeName: email
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: email
+          - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

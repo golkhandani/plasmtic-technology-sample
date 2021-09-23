@@ -1,7 +1,7 @@
 "use strict";
 
 import * as AWS from "aws-sdk";
-import dynamoDb from "../shared/dynamo-db";
+import {dynamoClient as dynamoDb} from "../../shared/dynamo-db";
 
 const params = {
   TableName: process.env.DYNAMODB + "-todo",
