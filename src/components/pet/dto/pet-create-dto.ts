@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import { IsArray, IsDefined, IsEnum, IsNotEmptyObject, IsString, ValidateNested } from "class-validator";
-import { PetStatus } from "../pet.entity";
+import { PetStatus } from "../pet-entity";
 import * as uuid from "uuid";
 import { Type } from "class-transformer";
 
