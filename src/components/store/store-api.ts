@@ -2,7 +2,7 @@
 
 import * as AWS from "aws-sdk";
 import { dynamoClient } from "../../shared/dynamo-db";
-import { StoreRepo } from "./store-epo";
+import { StoreRepo } from "./store-repo";
 
 const repo = new StoreRepo(dynamoClient)
 import { APIGatewayEvent, Context, ProxyCallback } from "aws-lambda";
