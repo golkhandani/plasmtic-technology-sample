@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "c4a4e987-6ed1-4a9c-a3e5-b68fa49080fe",
+		"name": "PetStore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Pet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"string\"\n  },\n  \"name\": \"doggie\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"string\"\n    }\n  ],\n  \"status\": \"available\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/pets",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"pets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pet by Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/pets?status=available",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"pets"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "available"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Image for Pet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/golkhandani/Downloads/2021-09-12 23.24.43.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{domain}}/pets/dc1abfad-c4e5-4295-b936-86b0935ad0cf/uploadImage",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"pets",
+						"dc1abfad-c4e5-4295-b936-86b0935ad0cf",
+						"uploadImage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Pet",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/pets/dc1abfad-c4e5-4295-b936-86b0935ad0cf",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"pets",
+						"dc1abfad-c4e5-4295-b936-86b0935ad0cf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pet by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/pets/9b1f67f4-c47a-4edb-b765-ea6dfe7397c6",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"pets",
+						"9b1f67f4-c47a-4edb-b765-ea6dfe7397c6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Inventory Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/store/inventory",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"store",
+						"inventory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"petId\": \"e49c39f5-3934-40b2-9935-d1d84a113e01\",\n  \"quantity\": 2,\n  \"shipDate\": \"2012-01-26T13:51:50.417-07:00\",\n  \"status\": \"placed\",\n  \"complete\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/store/order",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"store",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/store/order/96a6b7d3-d6fe-49c2-9836-956ac38c1498",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"store",
+						"order",
+						"96a6b7d3-d6fe-49c2-9836-956ac38c1498"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/store/order/96a6b7d3-d6fe-49c2-9836-956ac38c1498",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"store",
+						"order",
+						"96a6b7d3-d6fe-49c2-9836-956ac38c1498"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
