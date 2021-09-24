@@ -1,4 +1,4 @@
-service: sls-typescript-rest-api-with-dynamodb
+service: plasmatic-technology-sample
 
 frameworkVersion: ">=2.0.0"
 
@@ -6,91 +6,100 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dynamodb-local
-
+  - serverless-s3-local
+  
 provider:
   name: aws
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
-  region: eu-west-2
+  region: eu-west-1
   environment:
     DYNAMODB: plasmatic-technology
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB}"
 
 functions:
+  #### PET API ####
+  pet-upload-file:
+    handler: src/components/pet/pet-api.uploadFile
+    events:
+      - http:
+          path: pets/{id}/uploadImage
+          method: post
+          cors: true
+
+
   pet-create:
-    handler: src/components/pet/pet.api.create
+    handler: src/components/pet/pet-api.create
     events:
       - http:
           path: pets
           method: post
           cors: true
-
-  pet-find-by-status:
-    handler: src/components/pet/pet.api.findByStatus
+  
+  pet-update:
+    handler: src/components/pet/pet-api.update
     events:
       - http:
           path: pets
-          method: get
-          cors: true
-
-  create:
-    handler: src/components/todos/create.create
-    events:
-      - http:
-          path: todos
-          method: post
-          cors: true
-
-  list:
-    handler: src/components/todos/list.list
-    events:
-      - http:
-          path: todos
-          method: get
-          cors: true
-
-  get:
-    handler: src/components/todos/get.get
-    events:
-      - http:
-          path: todos/{id}
-          method: get
-          cors: true
-
-  update:
-    handler: src/components/todos/update.update
-    events:
-      - http:
-          path: todos/{id}
           method: put
           cors: true
 
-resources: # CloudFormation template syntax
-  Resources:
-    TodosDynamoDbTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: plasmatic-technology-todo
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+  pet-find-by-status:
+    handler: src/components/pet/pet-api.findByStatus
+    events:
+      - http:
+          path: pets
+          method: get
+          cors: true
+  
+  pet-find-by-id:
+    handler: src/components/pet/pet-api.findById
+    events:
+      - http:
+          path: pets/{id}
+          method: get
+          cors: true
+  
+  pet-delete-by-id:
+    handler: src/components/pet/pet-api.deleteById
+    events:
+      - http:
+          path: pets/{id}
+          method: delete
+          cors: true
+  #### STORE API ####
+  store-order-create:
+    handler: src/components/store/store-api.create
+    events:
+      - http:
+          path: store/order
+          method: post
+          cors: true
+
+  store-inventory-find-all:
+    handler: src/components/store/store-api.findAll
+    events:
+      - http:
+          path: store/inventory
+          method: get
+          cors: true
+  
+  store-order-find-by-id:
+    handler: src/components/store/store-api.findById
+    events:
+      - http:
+          path: store/order/{id}
+          method: get
+          cors: true
+  
+  store-order-delete-by-id:
+    handler: src/components/store/store-api.deleteById
+    events:
+      - http:
+          path: store/order/{id}
+          method: delete
+          cors: true
+
 
 custom:
-  dynamodb:
-    stages:
-      - test
+  serverlessPluginTypescript:
+    tsConfigFileLocation: './tsconfig.build.json'
