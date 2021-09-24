@@ -7,6 +7,7 @@ plugins:
   - serverless-offline
   - serverless-dynamodb-local
   - serverless-s3-local
+  - serverless-dotenv-plugin
   
 provider:
   name: aws
@@ -15,6 +16,9 @@ provider:
   region: eu-west-1
   environment:
     DYNAMODB: plasmatic-technology
+    REGION: ${env:REGION}
+    ACCESS_KEY: ${env:ACCESS_KEY}
+    SECRET_KEY: ${env:SECRET_KEY}
 
 functions:
   #### PET API ####
