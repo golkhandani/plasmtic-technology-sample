@@ -1,3 +1,6 @@
 .dynamodb
 .build
+.serverless
+dev_env
 node_modules
+buckets
