@@ -1,0 +1,31 @@
+version: '3.0'
+
+services:
+
+  localstack:
+    container_name: 'plasmatic-localstack'
+    image: localstack/localstack:0.12.5
+    ports:
+      - '443:443'
+      - '4566-4599:4566-4599'
+      - '8080:8080'
+    environment:
+      - HOSTNAME=localstack
+      - EXTERNAL_HOSTNAME=localstack
+      - DEBUG="true"
+      - LAMBDA_EXECUTOR=docker
+      - DATA_DIR=/tmp/localstack2
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - KINESIS_PROVIDER=kinesalite
+
+  setup-resources:
+    image: mesosphere/aws-cli
+    volumes:
+      - ./dev_env:/project/dev_env
+    environment:
+      - AWS_ACCESS_KEY_ID=DEFAULT_ACCESS_KEY
+      - AWS_SECRET_ACCESS_KEY=DEFAULT_SECRET
+      - AWS_DEFAULT_REGION=eu-west-1
+    entrypoint: /bin/sh -c
+    depends_on:
+      - localstack
