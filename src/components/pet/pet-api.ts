@@ -42,11 +42,7 @@ export const uploadFile = response(async (
     "getObject", {
     Bucket: bucket,
     Key: file,
-    Expires: 60000
   });
-
-  console.log(result, signedOriginalUrl);
-
 
   const updated = await repo.updateImage(id, signedOriginalUrl);
   const response = {
