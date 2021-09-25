@@ -1,25 +1,26 @@
 "use strict";
 
-import * as AWS from "aws-sdk";
 import { dynamoClient } from "../../shared/dynamo-db";
 import { PetRepo } from "./pet-repo";
 
-const repo = new PetRepo(dynamoClient)
-import { APIGatewayEvent, Context, ProxyCallback } from "aws-lambda";
-import { Pet, PetStatus } from "./pet-entity";
+import { APIGatewayEvent, Context } from "aws-lambda";
+import { Pet } from "./pet-entity";
 import { validateAndTransformRequest } from "../../shared/helper/validate-transform.helper";
 import { PetCreateDTO } from "./dto/pet-create-dto";
 import { PetFindByStatusDTO } from "./dto/pet-find-by-status-dto";
 import { PetUpdateDTO } from "./dto/pet-update-dto"
 import { PetFindByIdDTO } from "./dto/pet-find-by-id-dto";
 import { multipartParser } from "../../shared/helper/form-parser.helper";
-import { S3 } from "../../shared/s3";
+import { eventBridge, S3 } from "../../shared/s3";
+import { wLogger } from "../../shared/winston";
+import { response } from "../../shared/helper/api-response.helper";
+
+
+const repo = new PetRepo(dynamoClient)
 
 
 
-
-
-export const uploadFile = async (
+export const uploadFile = response(async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
@@ -44,157 +45,89 @@ export const uploadFile = async (
   const updated = await repo.updateImage(id, signedOriginalUrl);
   const response = {
     statusCode: 200,
-    body: JSON.stringify({
+    body: {
       etag: result.ETag.toString(),
       url: signedOriginalUrl,
       updated
-    }),
+    },
   };
   return response;
+})
 
-
-}
-
-export const s3hook = (event, context) => {
-};
-
-
-export const update = async (
+export const update = response(async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
-
-  const validated = await validateAndTransformRequest(JSON.parse(event.body), PetUpdateDTO)
-  if (validated.error) {
-    console.log(validated);
-
-    const response = {
-      statusCode: 400,
-      body: JSON.stringify(validated.error),
-    };
-    return response;
-  }
-
+  const validated = await validateAndTransformRequest(JSON.parse(event.body), PetUpdateDTO);
   const pet = new Pet(validated.data);
   const result = await repo.create(pet);
-
   const response = {
     statusCode: 200,
-    body: JSON.stringify(result),
+    body: result,
   };
   return response;
 
-};
+});
+
 // TODO: pet/updatePetWithForm
 
-
-
-
-export const create = async (
+export const create = response(async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
-
   const validated = await validateAndTransformRequest(JSON.parse(event.body), PetCreateDTO)
-  if (validated.error) {
-    console.log(validated);
-
-    const response = {
-      statusCode: 400,
-      body: JSON.stringify(validated.error),
-    };
-    return response;
-  }
-
   const pet = new Pet(validated.data);
+  const eventbridgedata = await eventBridge.putEvents({
+    Entries: [
+      {
+        EventBusName: 'inventory',
+        Source: 'acme.pet.category',
+        DetailType: 'IncreaceCategoryCountEvent',
+        Detail: JSON.stringify({ status: pet.status, count: +1 })
+      },
+    ]
+  }).promise();
+  if (eventbridgedata) {
+    wLogger.info("IncreaceCategoryCountEvent => ", "Has been called by create pet function!");
+  }
   const result = await repo.create(pet);
-
-  const response = {
+  return {
     statusCode: 200,
-    body: JSON.stringify(result),
+    body: result,
   };
-  return response;
+});
 
-};
-
-export const findByStatus = async (
+export const findByStatus = response(async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
-
-  console.log(event.multiValueQueryStringParameters);
-
-  const validated = await validateAndTransformRequest<PetFindByStatusDTO>(event.multiValueQueryStringParameters, PetFindByStatusDTO)
-  if (validated.error) {
-    console.log(validated);
-    const response = {
-      statusCode: 400,
-      body: JSON.stringify(validated.error),
-    };
-    return response;
-  }
-
-  console.log(validated.data)
-
+  const validated = await validateAndTransformRequest<PetFindByStatusDTO>(event.multiValueQueryStringParameters, PetFindByStatusDTO);
   const result = await repo.findByStatus(validated.data.status);
-
-  const response = {
+  return {
     statusCode: 200,
-    body: JSON.stringify(result),
+    body: result,
   };
-  return response;
+});
 
-};
-
-export const findById = async (
+export const findById = response(async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
-
-  console.log(event.pathParameters);
-
-  const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO)
-  if (validated.error) {
-    console.log(validated);
-    const response = {
-      statusCode: 400,
-      body: JSON.stringify(validated.error),
-    };
-    return response;
-  }
-
-  console.log(validated.data)
-
+  const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO);
   const result = await repo.findById(validated.data.id);
-
-  const response = {
+  return {
     statusCode: 200,
-    body: JSON.stringify(result),
+    body: result,
   };
-  return response;
-
-};
+});
 
 export const deleteById = async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
-
-  const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO)
-  if (validated.error) {
-    console.log(validated);
-    const response = {
-      statusCode: 400,
-      body: JSON.stringify(validated.error),
-    };
-    return response;
-  }
-
+  const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO);
   await repo.delete(validated.data.id);
-
-  const response = {
+  return {
     statusCode: 204,
   };
-  return response;
-
 };
