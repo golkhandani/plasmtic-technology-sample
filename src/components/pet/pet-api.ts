@@ -34,7 +34,8 @@ export const uploadFile = response(async (
   const result = await S3.putObject({
     Bucket: bucket,
     Key: file,
-    Body: uploadFile.content
+    Body: uploadFile.content,
+    ContentType: "image/jpeg"
   }).promise();
 
   const signedOriginalUrl = S3.getSignedUrl(
