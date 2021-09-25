@@ -143,7 +143,7 @@ $ serverless deploy --stage production --region eu-west-1 --verbose --force
 You have to create a user with needed permissions on AWS
 
 
-Fixing Upload File (Reading Binary)
+### Fixing Upload File (Reading Binary)
 
 
 1. Go to the API Gateway settings tab for your API and add multipart/form-data to the binary media types section.
@@ -155,3 +155,6 @@ Fixing Upload File (Reading Binary)
 
 2) https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-payload-encodings-configure-with-console.html
 
+### Event Bridge
+
+1. https://www.serverless.com/blog/eventbridge-use-cases-and-tutorial
