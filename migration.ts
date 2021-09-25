@@ -14,7 +14,7 @@
 var fs = require('fs');
 import { CreateTableInput } from "aws-sdk/clients/dynamodb";
 import { Pet } from "./src/components/pet/pet-entity";
-import { StoreOrder } from "./src/components/store/store-entity";
+import { InvertoryStatusCount, StoreOrder } from "./src/components/store/store-entity";
 import { dynamoClient, dynamodb, getTableName } from "./src/shared/dynamo-db";
 import { S3 } from "./src/shared/s3";
 
@@ -77,6 +77,28 @@ var StoreOrders: CreateTableInput = {
 };
 
 dynamodb.createTable(StoreOrders, function (err, data) {
+    if (err) {
+        console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+    }
+});
+
+var invertoryStatusCount: CreateTableInput = {
+    TableName: getTableName(InvertoryStatusCount.name),
+    KeySchema: [
+        { AttributeName: "status", KeyType: "HASH" },  //Partition key
+    ],
+    AttributeDefinitions: [
+        { AttributeName: "status", AttributeType: "S" },
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 10,
+        WriteCapacityUnits: 10
+    }
+};
+
+dynamodb.createTable(invertoryStatusCount, function (err, data) {
     if (err) {
         console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
     } else {
