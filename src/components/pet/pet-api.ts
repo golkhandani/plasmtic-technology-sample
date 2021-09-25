@@ -16,7 +16,7 @@ import { wLogger } from "../../shared/winston";
 import { response } from "../../shared/helper/api-response.helper";
 import { eventBridge } from "../../shared/event-bridge";
 
-
+import * as fs from "fs";
 const repo = new PetRepo(dynamoClient)
 
 
@@ -29,19 +29,23 @@ export const uploadFile = response(async (
   const uploadFile = await multipartParser(event);
   const id = event.pathParameters.id;
   const bucket = 'plasmatic-technolgy-s3'
-  const file = id + '.jpg';
+  const file = id + "_" + Date.now() + ".jpeg";
 
   const result = await S3.putObject({
     Bucket: bucket,
     Key: file,
     Body: uploadFile.content
-  }).promise()
+  }).promise();
+
   const signedOriginalUrl = S3.getSignedUrl(
     "getObject", {
     Bucket: bucket,
     Key: file,
     Expires: 60000
   });
+
+  console.log(result, signedOriginalUrl);
+
 
   const updated = await repo.updateImage(id, signedOriginalUrl);
   const response = {
