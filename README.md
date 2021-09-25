@@ -47,9 +47,9 @@
     |   |   ├──📂 store           # Store Logics
     |   |   |   ├──📂 dto         # Mostly for Validation
     |   |   |   ├──*-entity       # Typescript Model for store
-    |   |   |   ├──*-service      # Baham friendship logic
-    |   |   |   ├──*-repo         # Baham friendship logic
-    |   |   |   ├──*-service      # Baham friendship logic
+    |   |   |   ├──*-service      # Integration part (for example sending event, calling repo method, changing the return values,...)
+    |   |   |   ├──*-repo         # Interacting with database part
+    |   |   |   ├──*-api          # Handler parts
     |   |   |   └── ...
     |   ├──📂shared               # Shared file like database/helpers/logger/etc.
     ├──📂test                     # Test files (alternatively `spec`) 
