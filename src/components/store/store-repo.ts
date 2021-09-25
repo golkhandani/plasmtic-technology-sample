@@ -4,16 +4,58 @@ import * as AWS from "aws-sdk";
 import { AttributeValue, CreateTableInput, GetItemInput, PutItemInput, QueryInput, ScanInput } from "aws-sdk/clients/dynamodb";
 import { classToPlain } from "class-transformer";
 import { dynamodb, getTableName } from "../../shared/dynamo-db";
-import { StoreOrder } from "./store-entity";
+import { InvertoryStatusCount, StoreOrder } from "./store-entity";
+import { PetStatus } from "../pet/pet-entity";
+
+
+
+export class StoreInventoryRepo {
+  private readonly tableName = getTableName(InvertoryStatusCount.name);
+  private initialized = false;
+  constructor(private readonly dynamoClient: AWS.DynamoDB.DocumentClient) {
+
+  }
+
+  // 1.update based on creating new pet
+  // 2.update based on submitting a new order
+  public async update(status: PetStatus, count: number) {
+
+    return await this.dynamoClient.update(
+      {
+        TableName: this.tableName,
+        Key: {
+          status: status,
+        },
+        UpdateExpression: "SET #ct = if_not_exists(#ct, :initial) + :num",
+        ExpressionAttributeNames: {
+          "#ct": "count"
+        },
+        ExpressionAttributeValues: {
+          ":num": count,
+          ":initial": 0,
+        },
+        ReturnValues: "UPDATED_NEW"
+      }).promise();
+  }
+
+  public async findAll() {
+
+    const params: QueryInput = {
+      TableName: this.tableName,
+    };
+    const result = await this.dynamoClient.scan(params).promise();
+    const data = {};
+    result.Items.forEach((item: InvertoryStatusCount) => {
+      data[item.status] = item.count;
+    })
+    return data;
+  }
+}
 
 
 
 
-
-
-
-
-export class StoreRepo {
+export class StoreOrderRepo {
   private readonly tableName = getTableName(StoreOrder.name);
   private initialized = false;
   constructor(private readonly dynamoClient: AWS.DynamoDB.DocumentClient) {

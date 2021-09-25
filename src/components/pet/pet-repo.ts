@@ -60,7 +60,7 @@ export class PetRepo {
     return (await this.dynamoClient.get(params).promise()).Item as Pet;
   }
   public async updateImage(id: string, imageUrl: string): Promise<any> {
-    var params = {
+    const params = {
       TableName: this.tableName,
       Key: {
         "id": id as any,
@@ -78,7 +78,7 @@ export class PetRepo {
   }
 
   public async update(update: Partial<Pet>): Promise<any> {
-    var params = {
+    const params = {
       TableName: this.tableName,
       Key: {
         "id": update.id as any,
@@ -99,7 +99,7 @@ export class PetRepo {
   }
 
   public async delete(id: string): Promise<void> {
-    var params = {
+    const params = {
       TableName: this.tableName,
       Key: {
         "id": id as any,
