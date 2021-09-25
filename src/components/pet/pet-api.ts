@@ -11,9 +11,10 @@ import { PetFindByStatusDTO } from "./dto/pet-find-by-status-dto";
 import { PetUpdateDTO } from "./dto/pet-update-dto"
 import { PetFindByIdDTO } from "./dto/pet-find-by-id-dto";
 import { multipartParser } from "../../shared/helper/form-parser.helper";
-import { eventBridge, S3 } from "../../shared/s3";
+import { S3 } from "../../shared/s3";
 import { wLogger } from "../../shared/winston";
 import { response } from "../../shared/helper/api-response.helper";
+import { eventBridge } from "../../shared/event-bridge";
 
 
 const repo = new PetRepo(dynamoClient)
