@@ -22,6 +22,22 @@ provider:
 
 functions:
   #### PET API ####
+  notify-http:
+    handler: src/components/store/store-api.increaceCategoryCountEvent
+    events:
+      - http:
+          path: increace-count
+          method: get
+          cors: true
+  notify:
+    handler: src/components/store/store-api.increaceCategoryCountEvent
+    events:
+      - eventBridge:
+          eventBus: inventory 
+          pattern:
+            source:
+              - acme.pet.category
+
   pet-upload-file:
     handler: src/components/pet/pet-api.uploadFile
     events:
