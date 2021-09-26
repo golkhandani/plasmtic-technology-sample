@@ -1,7 +1,7 @@
 "use strict";
 
 import { dynamoClient } from "../../shared/dynamo-db";
-import { StoreInventoryRepo, StoreOrderRepo } from "./store-repo";
+import { storeInventoryRepo, StoreInventoryRepo, storeOrderRepo, StoreOrderRepo } from "./store-repo";
 import { APIGatewayEvent, Context, EventBridgeEvent } from "aws-lambda";
 import { StoreOrder } from "./store-entity";
 import { validateAndTransformRequest } from "../../shared/helper/validate-transform.helper";
@@ -13,8 +13,6 @@ import { response } from "../../shared/helper/api-response.helper";
 
 
 
-const repo = new StoreOrderRepo(dynamoClient);
-const invertory = new StoreInventoryRepo(dynamoClient);
 
 // EventBridge Handler
 export const increaceCategoryCountEvent = async (
@@ -24,7 +22,7 @@ export const increaceCategoryCountEvent = async (
 
   try {
     const data = JSON.parse(JSON.stringify(event?.detail || { status: PetStatus.available, count: 1 }));
-    const result = await invertory.update(data.status, data.count);
+    const result = await storeInventoryRepo.update(data.status, data.count);
     return {
       statusCode: 200,
       body: JSON.stringify({ result }),
@@ -46,7 +44,7 @@ export const create = response(async (
 ) => {
   const validated = await validateAndTransformRequest(JSON.parse(event.body), StoreOrderCreateDTO);
   const storeOrder = new StoreOrder(validated.data);
-  const result = await repo.create(storeOrder);
+  const result = await storeOrderRepo.create(storeOrder);
   return {
     statusCode: 200,
     body: result,
@@ -57,7 +55,7 @@ export const findAll = response(async (
   event: APIGatewayEvent,
   context: Context,
 ) => {
-  const result = await invertory.findAll();
+  const result = await storeInventoryRepo.findAll();
   return {
     statusCode: 200,
     body: result,
@@ -69,7 +67,7 @@ export const findById = response(async (
   context: Context,
 ) => {
   const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO);
-  const result = await repo.findById(validated.data.id);
+  const result = await storeOrderRepo.findById(validated.data.id);
   return {
     statusCode: 200,
     body: result,
@@ -81,7 +79,7 @@ export const deleteById = response(async (
   context: Context,
 ) => {
   const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO);
-  await repo.delete(validated.data.id);
+  await storeOrderRepo.delete(validated.data.id);
   return {
     statusCode: 204,
   };

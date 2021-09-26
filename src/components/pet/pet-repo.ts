@@ -4,7 +4,7 @@ import { Pet, PetStatus } from "./pet-entity";
 import * as AWS from "aws-sdk";
 import { AttributeValue, CreateTableInput, GetItemInput, PutItemInput, QueryInput, ScanInput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
 import { classToPlain } from "class-transformer";
-import { dynamodb, getTableName } from "../../shared/dynamo-db";
+import { dynamoClient, dynamodb, getTableName } from "../../shared/dynamo-db";
 
 
 
@@ -111,3 +111,6 @@ export class PetRepo {
 
 
 }
+
+export const petRepo = new PetRepo(dynamoClient)
+

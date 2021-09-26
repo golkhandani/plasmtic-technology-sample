@@ -1,7 +1,7 @@
 "use strict";
 
 import { dynamoClient } from "../../shared/dynamo-db";
-import { PetRepo } from "./pet-repo";
+import { petRepo, PetRepo } from "./pet-repo";
 
 import { APIGatewayEvent, Context } from "aws-lambda";
 import { Pet } from "./pet-entity";
@@ -17,7 +17,6 @@ import { response } from "../../shared/helper/api-response.helper";
 import { eventBridge } from "../../shared/event-bridge";
 
 import * as fs from "fs";
-const repo = new PetRepo(dynamoClient)
 
 
 
@@ -44,7 +43,7 @@ export const uploadFile = response(async (
     Key: file,
   });
 
-  const updated = await repo.updateImage(id, signedOriginalUrl);
+  const updated = await petRepo.updateImage(id, signedOriginalUrl);
   const response = {
     statusCode: 200,
     body: {
@@ -62,7 +61,7 @@ export const update = response(async (
 ) => {
   const validated = await validateAndTransformRequest(JSON.parse(event.body), PetUpdateDTO);
   const pet = new Pet(validated.data);
-  const result = await repo.create(pet);
+  const result = await petRepo.create(pet);
   const response = {
     statusCode: 200,
     body: result,
@@ -92,7 +91,7 @@ export const create = response(async (
   if (eventbridgedata) {
     wLogger.info("IncreaceCategoryCountEvent => ", "Has been called by create pet function!");
   }
-  const result = await repo.create(pet);
+  const result = await petRepo.create(pet);
   return {
     statusCode: 200,
     body: result,
@@ -104,7 +103,7 @@ export const findByStatus = response(async (
   context: Context,
 ) => {
   const validated = await validateAndTransformRequest<PetFindByStatusDTO>(event.multiValueQueryStringParameters, PetFindByStatusDTO);
-  const result = await repo.findByStatus(validated.data.status);
+  const result = await petRepo.findByStatus(validated.data.status);
   return {
     statusCode: 200,
     body: result,
@@ -116,7 +115,7 @@ export const findById = response(async (
   context: Context,
 ) => {
   const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO);
-  const result = await repo.findById(validated.data.id);
+  const result = await petRepo.findById(validated.data.id);
   return {
     statusCode: 200,
     body: result,
@@ -128,7 +127,7 @@ export const deleteById = async (
   context: Context,
 ) => {
   const validated = await validateAndTransformRequest<PetFindByIdDTO>(event.pathParameters, PetFindByIdDTO);
-  await repo.delete(validated.data.id);
+  await petRepo.delete(validated.data.id);
   return {
     statusCode: 204,
   };

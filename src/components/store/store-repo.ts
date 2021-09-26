@@ -3,7 +3,7 @@ import "reflect-metadata";
 import * as AWS from "aws-sdk";
 import { AttributeValue, CreateTableInput, GetItemInput, PutItemInput, QueryInput, ScanInput } from "aws-sdk/clients/dynamodb";
 import { classToPlain } from "class-transformer";
-import { dynamodb, getTableName } from "../../shared/dynamo-db";
+import { dynamoClient, dynamodb, getTableName } from "../../shared/dynamo-db";
 import { InvertoryStatusCount, StoreOrder } from "./store-entity";
 import { PetStatus } from "../pet/pet-entity";
 
@@ -52,6 +52,7 @@ export class StoreInventoryRepo {
   }
 }
 
+export const storeInventoryRepo = new StoreInventoryRepo(dynamoClient);
 
 
 
@@ -104,6 +105,6 @@ export class StoreOrderRepo {
     await this.dynamoClient.delete(params).promise();
     return;
   }
-
-
 }
+
+export const storeOrderRepo = new StoreOrderRepo(dynamoClient);
