@@ -141,7 +141,10 @@ $ serverless deploy --stage production --region eu-west-1 --verbose --force
 # Before Deploying the Application
 
 You have to create a user with needed permissions on AWS
+### If you are struggling with kinesis and dynamoDB in localstack
 
+Just take a look at the following link;
+https://medium.com/onexlab/fixed-error-localstack-services-kinesis-kinesis-starter-kinesis-terminated-with-return-code-11-fd8bb198eda5
 
 ### Fixing Upload File (Reading Binary)
 
